@@ -54,8 +54,30 @@ async function buscarPorCPF(cpf) {
     return resultado.rows[0] || null
 }
 
+async function obterRanking(limite = 10) {
+    const resultado = await db.query(
+        `
+        SELECT
+            u.nome,
+            COALESCE(SUM(v.pontuacao), 0) AS pontos,
+            ROW_NUMBER() OVER (
+                ORDER BY COALESCE(SUM(v.pontuacao), 0) DESC, u.nome ASC
+            ) AS posicao
+        FROM usuarios u
+        LEFT JOIN visitas v ON u.id = v.usuario_id
+        GROUP BY u.id, u.nome
+        ORDER BY pontos DESC, u.nome ASC
+        LIMIT $1
+        `,
+        [limite]
+    )
+
+    return resultado.rows
+}
+
 module.exports = {
     cadastrarUsuario,
     login,
-    buscarPorCPF
+    buscarPorCPF,
+    obterRanking
 }

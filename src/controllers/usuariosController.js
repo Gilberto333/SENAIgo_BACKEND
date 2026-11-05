@@ -13,4 +13,26 @@ async function cadastrarUsuario(req, res) {
     })
 }
 
-module.exports = { cadastrarUsuario }
+async function obterRanking(req, res) {
+    try {
+        const limite = req.query.limite || 10
+        const ranking = await usuariosModel.obterRanking(limite)
+
+        return res.status(200).json({
+            sucesso: true,
+            ranking
+        })
+    } catch (erro) {
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro ao buscar o ranking de usuários.",
+            erro: erro.message
+        })
+    }
+}
+
+
+module.exports = {
+    cadastrarUsuario,
+    obterRanking
+}
