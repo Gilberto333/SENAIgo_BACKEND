@@ -5,7 +5,6 @@ const cors = require("cors")
 const server = express()
 const PORTA = process.env.PORT || 3000
 
-
 require("./src/database/db")
 
 const usuarioRoutes = require("./src/routes/usuariosRouter")
@@ -32,11 +31,16 @@ server.use(logger)
 
 server.use('/auth', authRotas)
 server.use('/admin/usuarios', usuarioRoutes)
+server.use('/usuarios', usuarioRoutes) // Atende /usuarios/ranking ou /usuarios/cadastrarUsuario
+
 server.use(visitasRoutes)
 server.use(salasRoutes)
 server.use(produtosRoutes)
 server.use(resgatesRoutes)
 server.use(saldoRoutes)
+
+server.use(usuarioRoutes)
+
 server.use(rotaNaoEncontrada)
 server.use(tratarErros)
 
