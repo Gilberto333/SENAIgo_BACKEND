@@ -31,13 +31,12 @@ server.use(validarContentType)
 server.use(logger)
 
 server.use('/auth', authRotas)
-server.use(usuarioRoutes)
+server.use('/admin/usuarios', usuarioRoutes)
 server.use(visitasRoutes)
 server.use(salasRoutes)
 server.use(produtosRoutes)
 server.use(resgatesRoutes)
 server.use(saldoRoutes)
-
 server.use(rotaNaoEncontrada)
 server.use(tratarErros)
 
