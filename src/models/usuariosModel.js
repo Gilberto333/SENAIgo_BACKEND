@@ -59,7 +59,7 @@ async function obterRanking(limite = 10) {
         `
         SELECT
             u.nome,
-            COALESCE(SUM(v.pontuacao), 0) AS pontos,
+            COALESCE(SUM(v.pontuacao), 0)::INTEGER AS pontos,
             ROW_NUMBER() OVER (
                 ORDER BY COALESCE(SUM(v.pontuacao), 0) DESC, u.nome ASC
             ) AS posicao
@@ -79,12 +79,15 @@ async function listarTodos() {
     const resultado = await db.query(
         `
         SELECT
-            id,
-            cpf,
-            nome,
-            email
-        FROM usuarios
-        ORDER BY nome ASC
+            u.id,
+            u.cpf,
+            u.nome,
+            u.email,
+            COALESCE(SUM(v.pontuacao), 0)::INTEGER AS pontos
+        FROM usuarios u
+        LEFT JOIN visitas v ON u.id = v.usuario_id
+        GROUP BY u.id, u.cpf, u.nome, u.email
+        ORDER BY u.nome ASC
         `
     )
 
@@ -95,12 +98,15 @@ async function buscarPorId(id) {
     const resultado = await db.query(
         `
         SELECT
-            id,
-            cpf,
-            nome,
-            email
-        FROM usuarios
-        WHERE id = $1
+            u.id,
+            u.cpf,
+            u.nome,
+            u.email,
+            COALESCE(SUM(v.pontuacao), 0)::INTEGER AS pontos
+        FROM usuarios u
+        LEFT JOIN visitas v ON u.id = v.usuario_id
+        WHERE u.id = $1
+        GROUP BY u.id, u.cpf, u.nome, u.email
         `,
         [id]
     )
