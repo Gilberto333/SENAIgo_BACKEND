@@ -17,6 +17,7 @@ const salasRoutes = require("./src/routes/salasRouter")
 const produtosRoutes = require("./src/routes/produtosRouter")
 const resgatesRoutes = require("./src/routes/resgatesRouter")
 const saldoRoutes = require("./src/routes/saldoRouter")
+const dashboardRoutes = require("./src/routes/dashboardRoutes")
 const { rotaNaoEncontrada, tratarErros } = require("./src/middlewares/tratarErros")
 
 server.use(cors({
@@ -34,6 +35,7 @@ server.use('/auth', authRotas)
 server.use('/auth', senhaRotas) 
 server.use('/admin/usuarios', usuarioRoutes)
 server.use('/usuarios', usuarioRoutes)
+server.use('/api/dashboard', dashboardRoutes)
 
 server.use(visitasRoutes)
 server.use(salasRoutes)
