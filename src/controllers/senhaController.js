@@ -4,7 +4,7 @@ const { enviarCodigoRedefinicao } = require("../services/emailService")
 
 const MINUTOS_VALIDADE = 15
 const MAX_TENTATIVAS = 5
-const TAMANHO_MINIMO_SENHA = 8
+const TAMANHO_MINIMO_SENHA = 6
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 function gerarHash(codigo) {
