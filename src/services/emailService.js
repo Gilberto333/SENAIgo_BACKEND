@@ -32,4 +32,25 @@ async function enviarCodigoRedefinicao(destino, codigo, minutosValidade) {
     })
 }
 
-module.exports = { enviarCodigoRedefinicao }
+async function enviarEmailConfirmacaoCadastro(destino, nome) {
+    if (!transporter) {
+        if (process.env.NODE_ENV === "production") {
+            throw new Error("Serviço de e-mail não configurado.")
+        }
+        console.log(`[DEV] E-mail de confirmação de cadastro para ${destino}`)
+        return
+    }
+
+    await transporter.sendMail({
+        from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+        to: destino,
+        subject: "Cadastro realizado com sucesso",
+        text:
+            `Olá, ${nome}!\n\n` +
+            `Seu cadastro foi realizado com sucesso. ` +
+            `Agora você já pode entrar com o e-mail e a senha que cadastrou.\n\n` +
+            `Se você não fez esse cadastro, ignore este e-mail.`
+    })
+}
+
+module.exports = { enviarCodigoRedefinicao, enviarEmailConfirmacaoCadastro }

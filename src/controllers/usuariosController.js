@@ -1,10 +1,15 @@
 const usuariosModel = require("../models/usuariosModel")
+const { enviarEmailConfirmacaoCadastro } = require("../services/emailService")
 
 async function cadastrarUsuario(req, res) {
     try {
         const dadosUsuario = req.body
         const usuario = await usuariosModel.cadastrarUsuario(dadosUsuario)
         const { senha: _senha, ...usuarioSemSenha } = usuario
+
+        enviarEmailConfirmacaoCadastro(usuario.email, usuario.nome).catch((erroEmail) => {
+            console.error(`Falha ao enviar e-mail de confirmação (usuário ${usuario.id}):`, erroEmail.message)
+        })
 
         return res.status(201).json({
             sucesso: "Usuário cadastrado com sucesso!",
