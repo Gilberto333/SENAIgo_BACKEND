@@ -1,14 +1,5 @@
-const jwt = require("jsonwebtoken")
 const usuariosModel = require("../models/usuariosModel")
-
-function ehAdmin(email) {
-    const admins = (process.env.ADMIN_EMAILS || "")
-        .split(",")
-        .map(e => e.trim().toLowerCase())
-        .filter(Boolean)
-
-    return admins.includes(String(email).toLowerCase())
-}
+const { gerarToken } = require("../services/tokenService")
 
 async function login(req, res) {
     const { email, senha } = req.body
@@ -21,19 +12,7 @@ async function login(req, res) {
         })
     }
 
-    const admin = ehAdmin(usuarioLogin.email)
-
-    const token = jwt.sign(
-        {
-            id: usuarioLogin.id,
-            nome: usuarioLogin.nome,
-            admin
-        },
-        process.env.JWT_SECRET,
-        {
-            expiresIn: "24h"
-        }
-    )
+    const { token, admin } = gerarToken(usuarioLogin)
 
     const { senha: _senha, ...usuarioSemSenha } = usuarioLogin
 

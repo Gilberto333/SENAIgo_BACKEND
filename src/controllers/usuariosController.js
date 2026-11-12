@@ -1,5 +1,6 @@
 const usuariosModel = require("../models/usuariosModel")
 const { enviarEmailConfirmacaoCadastro } = require("../services/emailService")
+const { gerarToken } = require("../services/tokenService")
 
 async function cadastrarUsuario(req, res) {
     try {
@@ -11,9 +12,15 @@ async function cadastrarUsuario(req, res) {
             console.error(`Falha ao enviar e-mail de confirmação (usuário ${usuario.id}):`, erroEmail.message)
         })
 
+        const { token, admin } = gerarToken(usuario)
+
         return res.status(201).json({
             sucesso: "Usuário cadastrado com sucesso!",
-            usuario: usuarioSemSenha
+            usuario: {
+                ...usuarioSemSenha,
+                admin
+            },
+            token
         })
     } catch (erro) {
         return res.status(500).json({ sucesso: false, mensagem: "Erro ao cadastrar usuário.", erro: erro.message })
