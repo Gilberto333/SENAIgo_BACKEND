@@ -1,7 +1,7 @@
-const db = require("../database/db")
+const db = require("../database/db");
 
 async function listarSalas() {
-    const resultado = await db.query(`
+  const resultado = await db.query(`
         SELECT
             sala_id AS "salaId",
             sala,
@@ -12,13 +12,13 @@ async function listarSalas() {
         FROM salas
         WHERE ativa = true
         ORDER BY sala_id
-    `)
+    `);
 
-    return resultado.rows
+  return resultado.rows;
 }
 
 async function listarTodasSalas() {
-    const resultado = await db.query(`
+  const resultado = await db.query(`
         SELECT
             sala_id AS "salaId",
             sala,
@@ -28,14 +28,14 @@ async function listarTodasSalas() {
             ativa
         FROM salas
         ORDER BY sala_id
-    `)
+    `);
 
-    return resultado.rows
+  return resultado.rows;
 }
 
 async function buscarSalaPorId(salaId) {
-    const resultado = await db.query(
-        `
+  const resultado = await db.query(
+    `
         SELECT
             sala_id AS "salaId",
             sala,
@@ -46,15 +46,15 @@ async function buscarSalaPorId(salaId) {
         FROM salas
         WHERE sala_id = $1
         `,
-        [salaId]
-    )
+    [salaId],
+  );
 
-    return resultado.rows[0] || null
+  return resultado.rows[0] || null;
 }
 
 async function cadastrarSala(dadosSala) {
-    const resultado = await db.query(
-        `
+  const resultado = await db.query(
+    `
         INSERT INTO salas (sala, pontos, icone, descricao)
         VALUES ($1, $2, $3, $4)
         RETURNING
@@ -65,20 +65,20 @@ async function cadastrarSala(dadosSala) {
             descricao,
             ativa
         `,
-        [
-            dadosSala.sala,
-            dadosSala.pontos,
-            dadosSala.icone || "map-pin",
-            dadosSala.descricao || ""
-        ]
-    )
+    [
+      dadosSala.sala,
+      dadosSala.pontos,
+      dadosSala.icone || "map-pin",
+      dadosSala.descricao || "",
+    ],
+  );
 
-    return resultado.rows[0]
+  return resultado.rows[0];
 }
 
 async function atualizarSala(salaId, dadosSala) {
-    const resultado = await db.query(
-        `
+  const resultado = await db.query(
+    `
         UPDATE salas
         SET
             sala = $1,
@@ -95,22 +95,22 @@ async function atualizarSala(salaId, dadosSala) {
             descricao,
             ativa
         `,
-        [
-            dadosSala.sala,
-            dadosSala.pontos,
-            dadosSala.icone || "map-pin",
-            dadosSala.descricao || "",
-            dadosSala.ativa,
-            salaId
-        ]
-    )
+    [
+      dadosSala.sala,
+      dadosSala.pontos,
+      dadosSala.icone || "map-pin",
+      dadosSala.descricao || "",
+      dadosSala.ativa,
+      salaId,
+    ],
+  );
 
-    return resultado.rows[0] || null
+  return resultado.rows[0] || null;
 }
 
 async function removerSala(salaId) {
-    const resultado = await db.query(
-        `
+  const resultado = await db.query(
+    `
         DELETE FROM salas
         WHERE sala_id = $1
         RETURNING
@@ -121,17 +121,34 @@ async function removerSala(salaId) {
             descricao,
             ativa
         `,
-        [salaId]
-    )
+    [salaId],
+  );
 
-    return resultado.rows[0] || null
+  return resultado.rows[0] || null;
+}
+
+async function bloquear_leitura(salaID, bloquear_leitura, bloqueada_ate) {
+  const resultado = await db.query(
+    `UPDATE salas
+        SET
+            bloquear_leitura = $2,
+            bloqueada_ate = $3   
+        WHERE sala_id = $1 
+        RETURNING
+            sala_id,
+            bloquear_leitura,
+            bloqueada_ate;`,
+        [salaID, bloquear_leitura, bloqueada_ate],
+  );
+  return resultado.rows[0] || null;
 }
 
 module.exports = {
-    listarSalas,
-    listarTodasSalas,
-    buscarSalaPorId,
-    cadastrarSala,
-    atualizarSala,
-    removerSala
-}
+  listarSalas,
+  listarTodasSalas,
+  buscarSalaPorId,
+  cadastrarSala,
+  atualizarSala,
+  removerSala,
+  bloquear_leitura,
+};

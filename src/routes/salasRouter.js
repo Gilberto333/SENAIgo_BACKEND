@@ -12,5 +12,4 @@ router.get("/todasSalas", middlewareAutenticar, middlewareAutorizarAdmin, salasC
 router.post("/cadastrarSala", middlewareAutenticar, middlewareAutorizarAdmin, validarSchema(schema.sala), salasController.cadastrarSala)
 router.put("/atualizarSala/:id", middlewareAutenticar, middlewareAutorizarAdmin, validarSchema(schema.sala), salasController.atualizarSala)
 router.delete("/removerSala/:id", middlewareAutenticar, middlewareAutorizarAdmin, salasController.removerSala)
-
 module.exports = router

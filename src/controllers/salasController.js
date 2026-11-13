@@ -65,10 +65,18 @@ async function removerSala(req, res) {
   }
 }
 
+async function bloquear_leitura(req, res) {
+  const salaID = Number(req.params.id)
+  const sala = await salasModel.bloquear_leitura(salaID)
+
+
+}
+
 module.exports = {
   listarSalas,
   listarTodasSalas,
   cadastrarSala,
   atualizarSala,
-  removerSala
+  removerSala,
+  bloquear_leitura
 }

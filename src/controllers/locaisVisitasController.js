@@ -20,7 +20,6 @@ async function registrarVisitas(req, res) {
             })
         }
 
-        // 👇 ADICIONE ESTES LOGS
         console.log("req.usuario:", req.usuario)
         console.log("req.body:", req.body)
         console.log("salaCadastrada:", salaCadastrada)
