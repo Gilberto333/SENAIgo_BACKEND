@@ -20,7 +20,6 @@ async function registrarVisitas(req, res) {
             })
         }
 
-        // 👇 ADICIONE ESTES LOGS
         console.log("req.usuario:", req.usuario)
         console.log("req.body:", req.body)
         console.log("salaCadastrada:", salaCadastrada)
@@ -65,7 +64,68 @@ async function listarVisitas(req, res) {
     }
 }
 
+async function avaliarVisita(req, res) {
+    try {
+        const usuarioId = req.usuario?.id
+        const visitaId = Number(req.params.id)
+        const { estrelas, comentario } = req.body
+
+        if (!Number.isInteger(visitaId) || visitaId <= 0) {
+            return res.status(400).json({ erro: "Id da visita inválido." })
+        }
+
+        if (typeof estrelas !== "number" || !Number.isInteger(estrelas) || estrelas < 1 || estrelas > 5) {
+            return res.status(400).json({ erro: "A avaliação deve ser um número inteiro de 1 a 5." })
+        }
+
+        let comentarioFinal = null
+
+        if (comentario !== undefined && comentario !== null) {
+            if (typeof comentario !== "string") {
+                return res.status(400).json({ erro: "O comentário deve ser um texto." })
+            }
+
+            comentarioFinal = comentario.trim() || null
+
+            if (comentarioFinal && comentarioFinal.length > 500) {
+                return res.status(400).json({ erro: "O comentário pode ter no máximo 500 caracteres." })
+            }
+        }
+
+        const visita = await visitasModel.buscarVisitaDoUsuario(visitaId, usuarioId)
+
+        if (!visita) {
+            return res.status(404).json({ erro: "Visita não encontrada." })
+        }
+
+        if (visita.estrelas !== null) {
+            return res.status(409).json({ erro: "Esta visita já foi avaliada." })
+        }
+
+        const avaliacao = await visitasModel.avaliarVisita(
+            visitaId,
+            usuarioId,
+            estrelas,
+            comentarioFinal
+        )
+
+        if (!avaliacao) {
+            return res.status(409).json({ erro: "Esta visita já foi avaliada." })
+        }
+
+        return res.json({
+            sucesso: "Avaliação registrada com sucesso!",
+            avaliacao
+        })
+
+    } catch (erro) {
+        console.error("ERRO:", erro)
+        return res.status(500).json({ erro: "Erro ao registrar avaliação." })
+    }
+}
+
 module.exports = {
     registrarVisitas,
-    listarVisitas
+    listarVisitas,
+    avaliarVisita
 }
