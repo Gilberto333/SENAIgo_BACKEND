@@ -6,12 +6,13 @@ async function salvarVisita(usuario, id, salaId, sala, pontos) {
         `
         INSERT INTO visitas (usuario_id, sala_id, pontuacao)
         VALUES ($1, $2, $3)
-        RETURNING criado_em
+        RETURNING id AS "visitaId", criado_em
         `,
         [id, salaId, pontos]
     )
 
     return {
+        visitaId: resultado.rows[0].visitaId,
         id,
         nome: usuario,
         salaId,
@@ -58,8 +59,45 @@ async function verificarVisita(usuarioId, salaId) {
 
     return resultado.rows.length > 0
 }
+
+async function buscarVisitaDoUsuario(visitaId, usuarioId) {
+
+    const resultado = await db.query(
+        `
+        SELECT id, estrelas
+        FROM visitas
+        WHERE id = $1
+        AND usuario_id = $2
+        `,
+        [visitaId, usuarioId]
+    )
+
+    return resultado.rows[0] || null
+}
+
+async function avaliarVisita(visitaId, usuarioId, estrelas, comentario) {
+
+    const resultado = await db.query(
+        `
+        UPDATE visitas
+        SET estrelas = $1,
+            comentario = $2,
+            avaliado_em = NOW()
+        WHERE id = $3
+        AND usuario_id = $4
+        AND estrelas IS NULL
+        RETURNING id, estrelas, comentario, avaliado_em AS "avaliadoEm"
+        `,
+        [estrelas, comentario, visitaId, usuarioId]
+    )
+
+    return resultado.rows[0] || null
+}
+
 module.exports = {
     salvarVisita,
     listarVisitas,
-    verificarVisita
+    verificarVisita,
+    buscarVisitaDoUsuario,
+    avaliarVisita
 }
