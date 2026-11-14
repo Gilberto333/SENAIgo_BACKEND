@@ -6,7 +6,6 @@ const router = express.Router()
 router.get("/", controller.obterDashboard)
 router.get("/resumo", controller.obterResumo)
 router.get("/salas", controller.listarSalasMaisVisitadas)
-router.get("/usuarios/top", controller.listarTopUsuarios)
-router.get("/visitas/ultimas", controller.listarUltimasVisitas)
+router.get("/projecao", controller.gerarProjecao)
 
 module.exports = router
