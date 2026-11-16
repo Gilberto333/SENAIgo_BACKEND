@@ -1,15 +1,25 @@
 const db = require("../database/db")
 
 async function salvarVisita(usuario, id, salaId, sala, pontos) {
-
     const resultado = await db.query(
         `
         INSERT INTO visitas (usuario_id, sala_id, pontuacao)
-        VALUES ($1, $2, $3)
+        SELECT $1, $2, $3
+        FROM salas
+        WHERE sala_id = $2
+          AND ativa = TRUE
+          AND bloquear_leitura = FALSE
+          AND (bloqueada_ate IS NULL OR bloqueada_ate > NOW())
         RETURNING id AS "visitaId", criado_em
         `,
         [id, salaId, pontos]
     )
+
+    if (!resultado.rows[0]) {
+        const erro = new Error("Leitura bloqueada ou tempo expirado para esta sala.")
+        erro.status = 403
+        throw erro
+    }
 
     return {
         visitaId: resultado.rows[0].visitaId,
