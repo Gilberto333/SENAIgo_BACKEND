@@ -18,7 +18,7 @@ async function cadastrarUsuario(dadosUsuario) {
     return resultado.rows[0]
 }
 
-async function login(email, senha) {
+async function buscarPorEmail(email) {
     const resultado = await db.query(
         `
         SELECT
@@ -29,14 +29,12 @@ async function login(email, senha) {
             senha
         FROM usuarios
         WHERE email = $1
-        AND senha = $2
         `,
-        [email, senha]
+        [email]
     )
 
     return resultado.rows[0] || null
 }
-
 async function buscarPorCPF(cpf) {
     const resultado = await db.query(
         `
@@ -146,7 +144,7 @@ async function obterVisitasPorUsuario(usuarioId) {
 
 module.exports = {
     cadastrarUsuario,
-    login,
+    buscarPorEmail,
     buscarPorCPF,
     obterRanking,
     listarTodos,

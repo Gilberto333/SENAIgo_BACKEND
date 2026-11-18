@@ -1,12 +1,17 @@
 const usuariosModel = require("../models/usuariosModel")
 const { gerarToken } = require("../services/tokenService")
+const { compararSenha } = require("../services/senhaService")
 
 async function login(req, res) {
     const { email, senha } = req.body
 
-    const usuarioLogin = await usuariosModel.login(email, senha)
+    const usuarioLogin = await usuariosModel.buscarPorEmail(email)
 
-    if (!usuarioLogin) {
+    const senhaCorreta = usuarioLogin
+        ? await compararSenha(senha, usuarioLogin.senha)
+        : false
+
+    if (!senhaCorreta) {
         return res.status(400).json({
             erro: "Este email e senha não existem. Verifique se já realizou o cadastro."
         })

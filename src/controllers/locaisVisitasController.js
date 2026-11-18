@@ -29,21 +29,18 @@ async function registrarVisitas(req, res) {
             })
         }
 
-        // 1. Verifica se a leitura do QR Code foi bloqueada manualmente pelo admin
         if (salaCadastrada.bloquear_leitura) {
             return res.status(403).json({
                 erro: "A leitura do QR Code desta sala está bloqueada no momento."
             })
         }
 
-        // 2. Verifica se já passou da data/hora limite configurada
         if (salaCadastrada.bloqueada_ate && new Date() > new Date(salaCadastrada.bloqueada_ate)) {
             return res.status(403).json({
                 erro: "O tempo limite para ler o QR Code desta sala já encerrou."
             })
         }
 
-        // 3. Verifica a resposta se a sala estiver no Modo Palestra
         if (salaCadastrada.modoPalestra && salaCadastrada.questao) {
             if (!resposta || typeof resposta !== "string") {
                 return res.status(400).json({
