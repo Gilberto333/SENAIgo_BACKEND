@@ -21,6 +21,12 @@ router.post(
 router.get("/ranking", usuariosController.obterRanking)
 
 router.get(
+    "/perfil",
+    autenticar,
+    usuariosController.obterMeuPerfil
+)
+
+router.get(
     "/",
     autenticar,
     autorizarAdmin,

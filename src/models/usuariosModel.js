@@ -142,6 +142,29 @@ async function obterVisitasPorUsuario(usuarioId) {
     return resultado.rows
 }
 
+async function obterPerfilCompleto(usuarioId) {
+    const resultado = await db.query(
+        `
+        SELECT
+            u.id,
+            u.cpf,
+            u.nome,
+            u.email,
+            SPLIT_PART(u.email, '@', 1) AS username,
+            COALESCE(SUM(v.pontuacao), 0)::INTEGER AS pontos_totais,
+            COUNT(v.id)::INTEGER AS qrcodes_lidos,
+            COUNT(DISTINCT v.sala_id)::INTEGER AS eventos_participados
+        FROM usuarios u
+        LEFT JOIN visitas v ON u.id = v.usuario_id
+        WHERE u.id = $1
+        GROUP BY u.id, u.cpf, u.nome, u.email
+        `,
+        [usuarioId]
+    )
+
+    return resultado.rows[0] || null
+}
+
 module.exports = {
     cadastrarUsuario,
     buscarPorEmail,
@@ -149,5 +172,6 @@ module.exports = {
     obterRanking,
     listarTodos,
     buscarPorId,
-    obterVisitasPorUsuario
+    obterVisitasPorUsuario,
+    obterPerfilCompleto
 }
