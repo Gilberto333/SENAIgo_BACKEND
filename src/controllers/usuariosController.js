@@ -1,11 +1,13 @@
 const usuariosModel = require("../models/usuariosModel")
 const { enviarEmailConfirmacaoCadastro } = require("../services/emailService")
 const { gerarToken } = require("../services/tokenService")
+const { gerarHash } = require("../services/senhaService")
 
 async function cadastrarUsuario(req, res) {
     try {
         const dadosUsuario = req.body
-        const usuario = await usuariosModel.cadastrarUsuario(dadosUsuario)
+        const senhaHash = await gerarHash(dadosUsuario.senha)
+        const usuario = await usuariosModel.cadastrarUsuario({ ...dadosUsuario, senha: senhaHash })
         const { senha: _senha, ...usuarioSemSenha } = usuario
 
         enviarEmailConfirmacaoCadastro(usuario.email, usuario.nome).catch((erroEmail) => {
@@ -100,10 +102,34 @@ async function listarVisitasDoUsuario(req, res) {
     }
 }
 
+async function obterMeuPerfil(req, res) {
+    try {
+        const usuarioId = req.usuario?.id || req.userId || req.usuarioId
+
+        if (!usuarioId) {
+            return res.status(401).json({ sucesso: false, mensagem: "Usuário não autenticado." })
+        }
+
+        const perfil = await usuariosModel.obterPerfilCompleto(usuarioId)
+
+        if (!perfil) {
+            return res.status(404).json({ sucesso: false, mensagem: "Usuário não encontrado." })
+        }
+
+        return res.status(200).json({
+            sucesso: true,
+            perfil
+        })
+    } catch (erro) {
+        return res.status(500).json({ sucesso: false, mensagem: "Erro ao carregar perfil.", erro: erro.message })
+    }
+}
+
 module.exports = {
     cadastrarUsuario,
     obterRanking,
     listarUsuarios,
     obterUsuarioPorId,
-    listarVisitasDoUsuario
+    listarVisitasDoUsuario,
+    obterMeuPerfil
 }
