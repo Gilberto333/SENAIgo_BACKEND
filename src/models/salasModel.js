@@ -47,7 +47,8 @@ async function listarSalas(eventoId = null) {
   const resultado = await db.query(
     `
     SELECT
-      id,
+      sala_id AS id,
+      sala_id,
       evento_id,
       sala,
       pontos,
@@ -61,7 +62,7 @@ async function listarSalas(eventoId = null) {
       questao
     FROM salas
     ${where}
-    ORDER BY ordem ASC NULLS LAST, id ASC
+    ORDER BY sala_id ASC
     `,
     params
   );
@@ -76,7 +77,8 @@ async function listarTodasSalas(eventoId = null) {
   const resultado = await db.query(
     `
     SELECT
-      id,
+      sala_id AS id,
+      sala_id,
       evento_id,
       sala,
       pontos,
@@ -90,7 +92,7 @@ async function listarTodasSalas(eventoId = null) {
       questao
     FROM salas
     ${where}
-    ORDER BY ordem ASC NULLS LAST, id ASC
+    ORDER BY sala_id ASC
     `,
     params
   );
@@ -102,7 +104,8 @@ async function buscarSalaPorId(salaId) {
   const resultado = await db.query(
     `
     SELECT
-      id,
+      sala_id AS id,
+      sala_id,
       evento_id,
       sala,
       pontos,
@@ -115,7 +118,7 @@ async function buscarSalaPorId(salaId) {
       modo_palestra AS "modoPalestra",
       questao
     FROM salas
-    WHERE id = $1
+    WHERE sala_id = $1
     `,
     [salaId]
   );
@@ -135,7 +138,8 @@ async function buscarSalaPorToken(qrToken, eventoId = null) {
   const resultado = await db.query(
     `
     SELECT
-      id,
+      sala_id AS id,
+      sala_id,
       evento_id,
       sala,
       pontos,
@@ -177,7 +181,8 @@ async function cadastrarSala(dadosSala) {
     )
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb)
     RETURNING
-      id,
+      sala_id AS id,
+      sala_id,
       evento_id,
       sala,
       pontos,
@@ -221,9 +226,10 @@ async function atualizarSala(salaId, dadosSala) {
       ativa = $5,
       modo_palestra = $6,
       questao = $7::jsonb
-    WHERE id = $8
+    WHERE sala_id = $8
     RETURNING
-      id,
+      sala_id AS id,
+      sala_id,
       evento_id,
       sala,
       pontos,
@@ -255,9 +261,10 @@ async function removerSala(salaId) {
   const resultado = await db.query(
     `
     DELETE FROM salas
-    WHERE id = $1
+    WHERE sala_id = $1
     RETURNING
-      id,
+      sala_id AS id,
+      sala_id,
       evento_id,
       sala,
       pontos,
@@ -279,9 +286,10 @@ async function bloquear_leitura(salaId, bloquearLeitura, bloqueadaAte) {
     SET
       bloquear_leitura = $1,
       bloqueada_ate = $2
-    WHERE id = $3
+    WHERE sala_id = $3
     RETURNING
-      id,
+      sala_id AS id,
+      sala_id,
       evento_id,
       sala,
       pontos,

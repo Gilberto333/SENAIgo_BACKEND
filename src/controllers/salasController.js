@@ -64,6 +64,7 @@ async function listarSalas(req, res) {
     const salas = await salasModel.listarSalas();
     return res.json(salas);
   } catch (error) {
+    console.error("Erro em listarSalas:", error);
     return res.status(500).json({ erro: "Erro ao listar salas ativas." });
   }
 }
@@ -73,6 +74,7 @@ async function listarTodasSalas(req, res) {
     const salas = await salasModel.listarTodasSalas();
     return res.json(salas);
   } catch (error) {
+    console.error("Erro em listarTodasSalas:", error);
     return res.status(500).json({ erro: "Erro ao listar todas as salas." });
   }
 }
@@ -87,6 +89,7 @@ async function cadastrarSala(req, res) {
     const sala = await salasModel.cadastrarSala(req.body);
     return res.status(201).json({ sucesso: "Sala cadastrada com sucesso!", sala });
   } catch (error) {
+    console.error("Erro em cadastrarSala:", error);
     return res.status(500).json({ erro: "Erro ao cadastrar sala." });
   }
 }
@@ -111,6 +114,7 @@ async function atualizarSala(req, res) {
 
     return res.json({ sucesso: "Sala atualizada com sucesso!", sala });
   } catch (error) {
+    console.error("Erro em atualizarSala:", error);
     return res.status(500).json({ erro: "Erro ao atualizar sala." });
   }
 }
@@ -140,6 +144,7 @@ async function removerSala(req, res) {
 
     return res.json({ sucesso: "Sala removida com sucesso!", sala });
   } catch (error) {
+    console.error("Erro em removerSala:", error);
     return res.status(500).json({ erro: "Erro ao remover sala." });
   }
 }
@@ -177,6 +182,7 @@ async function bloquear_leitura(req, res) {
 
     return res.status(200).json({ sucesso: "Configuração de leitura atualizada com sucesso!", sala });
   } catch (error) {
+    console.error("Erro em bloquear_leitura:", error);
     return res.status(500).json({ erro: "Erro ao atualizar bloqueio de leitura da sala." });
   }
 }
@@ -221,6 +227,7 @@ async function responderQuizPalestra(req, res) {
       erro: !acertou ? "Resposta incorreta." : null,
     });
   } catch (error) {
+    console.error("Erro em responderQuizPalestra:", error);
     return res.status(500).json({ erro: "Erro ao validar resposta da palestra." });
   }
 }
