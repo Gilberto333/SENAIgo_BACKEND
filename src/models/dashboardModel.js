@@ -272,10 +272,27 @@ function calcularProjecao(base, salas, participantes, informadas = {}) {
     }
 }
 
+async function avaliacoesSalas() {
+  const r = await db.query(`
+    SELECT
+      s.sala_id,
+      s.sala,
+      COALESCE(ROUND(AVG(v.estrelas), 1)::FLOAT, 0) AS media_estrelas,
+      COUNT(v.estrelas)::INT AS total_avaliacoes
+    FROM salas s
+    LEFT JOIN visitas v ON v.sala_id = s.sala_id AND v.estrelas IS NOT NULL
+    GROUP BY s.sala_id, s.sala
+    ORDER BY media_estrelas DESC;
+  `);
+
+  return r.rows; 
+}
+
 module.exports = { 
     obterResumo, 
     obterSalasPorVisitas, 
     obterSalasNaoVisitadas,
     obterBaseProjecao,
-    calcularProjecao
+    calcularProjecao,
+    avaliacoesSalas
 }

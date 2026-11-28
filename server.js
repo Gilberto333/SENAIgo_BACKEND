@@ -31,7 +31,6 @@ const origensPermitidas = (
 server.use(
   cors({
     origin: (origin, callback) => {
-      // Permite requisições sem Origin (ex.: Postman, curl, apps nativos) e origens da lista
       if (!origin || origensPermitidas.includes(origin)) {
         return callback(null, true);
       }

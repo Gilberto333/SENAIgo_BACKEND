@@ -122,9 +122,20 @@ async function gerarProjecao(req, res) {
     }
 }
 
+async function listarAvaliacoesSalas(req, res){
+try{
+    const avaliacoes = await model.avaliacoesSalas()
+return res.status(200).json(avaliacoes)
+} catch (error){
+    console.error('Erro ao buscar avaliações das salas:', error)
+    return res.status(500).json({erro: 'Não foi possível carregar as avaliações das salas.'})
+}
+}
+
 module.exports = {
     obterDashboard,
     obterResumo,
     listarSalasMaisVisitadas,
-    gerarProjecao
+    gerarProjecao,
+    listarAvaliacoesSalas
 }
